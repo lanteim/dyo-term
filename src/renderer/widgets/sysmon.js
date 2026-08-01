@@ -3,6 +3,8 @@ window.WIDGETS = window.WIDGETS || {};
 window.WIDGETS.sysmon = {
     id: "sysmon",
     title: "widget.sysmon",
+    category: "system",
+    description: "CPU / RAM / load / uptime",
     defaultSize: { w: 6, h: 3 },
     mount(body) {
         const t = window.I18N.t.bind(window.I18N);

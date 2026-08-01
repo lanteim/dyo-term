@@ -95,9 +95,28 @@ try {
         return n + " tabs";
     });
     await scenario("widgets", async () => {
-        await waitFor("document.querySelectorAll('.grid-stack .widget').length >= 4", 10000, "widgets mounted");
+        await waitFor("document.querySelectorAll('.grid-stack .widget').length >= 3", 10000, "widgets mounted");
         const titles = await ev("Array.from(document.querySelectorAll('.grid-stack .widget > header .title')).map(e=>e.textContent)");
-        return titles.join(", ");
+        return "default (minimal): " + titles.join(", ");
+    });
+    await scenario("exec-bridge", async () => {
+        const r = await ev(`window.dyo.exec("echo", ["dyo-exec-ok"])`, true);
+        if (!r || r.code !== 0 || !String(r.stdout).includes("dyo-exec-ok")) throw new Error("exec failed: " + JSON.stringify(r));
+        return "exec bridge works";
+    });
+    await scenario("catalog-add", async () => {
+        const before = await ev("document.querySelectorAll('.grid-stack .widget').length");
+        await ev("window.dash.openCatalog()");
+        const cats = await ev("document.querySelectorAll('#catalog-body .cat-item').length");
+        if (cats < 8) throw new Error("catalog too small: " + cats);
+        await ev(`window.dash.addWidget("git", { autoPosition: true }, true)`);
+        await ev(`window.dash.addWidget("db", { autoPosition: true }, true)`);
+        await delay(400);
+        const after = await ev("document.querySelectorAll('.grid-stack .widget').length");
+        if (after !== before + 2) throw new Error(`expected +2 widgets, ${before}->${after}`);
+        const dbForm = await ev("!!document.querySelector('.db-connect')");
+        if (!dbForm) throw new Error("db widget did not render connect form");
+        return `${cats} catalog items; added git + db (DataGrip-mini)`;
     });
     await scenario("sysmon-live", async () => {
         await waitFor("document.querySelector('#_sm_cpu') && document.querySelector('#_sm_cpu').textContent !== '--'", 12000, "cpu metric");

@@ -3,6 +3,8 @@ window.WIDGETS = window.WIDGETS || {};
 window.WIDGETS.nowplaying = {
     id: "nowplaying",
     title: "widget.nowplaying",
+    category: "media",
+    description: "Control Apple Music",
     defaultSize: { w: 6, h: 3 },
     mount(body) {
         body.innerHTML = `

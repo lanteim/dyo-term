@@ -280,6 +280,28 @@ function registerIpc() {
     }));
     ipcMain.handle("open:path", (e, p) => shell.openPath(p));
     ipcMain.handle("open:external", (e, u) => openExternalSafe(u));
+
+    // Run a CLI command for DevOps widgets (git, kubectl, docker, aws, …).
+    // execFile with an argv array (no shell) so widget inputs can't inject.
+    ipcMain.handle("exec", async (e, cmd, args = [], opts = {}) => {
+        const env = loginEnvPromise ? await loginEnvPromise : process.env;
+        return new Promise(resolve => {
+            execFile(cmd, Array.isArray(args) ? args : [], {
+                cwd: opts.cwd && fs.existsSync(opts.cwd) ? opts.cwd : app.getPath("home"),
+                env,
+                timeout: opts.timeout || 8000,
+                maxBuffer: 8 * 1024 * 1024
+            }, (err, stdout, stderr) => {
+                resolve({
+                    code: err ? (typeof err.code === "number" ? err.code : 1) : 0,
+                    stdout: String(stdout || ""),
+                    stderr: String(stderr || (err && err.message) || "")
+                });
+            });
+        });
+    });
+
+    require("./db.js").register(ipcMain);
 }
 
 const MUSIC_STATE_SCRIPT = `tell application "Music"

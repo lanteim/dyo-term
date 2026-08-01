@@ -19,9 +19,43 @@ no GPL code.
   - Split panes, iTerm-style: `⌘D` vertical, `⌘⇧D` horizontal, drag to resize
   - Find in buffer with regex (`⌘F`)
 - **Widget dashboard** — a Gridstack canvas you can rearrange, resize, add to and
-  remove from in edit mode (`⌘E`). Layout persists.
-  - Clock, System (CPU/RAM/load/uptime), Network (live traffic sparkline),
-    Apple Music (control Music.app), Notes (autosaved scratchpad)
+  remove from in edit mode (`⌘E`). The default is deliberately minimal; add what
+  you need from the categorized **Widget Catalog**. Layout persists.
+  - **System**: CPU/RAM/load/uptime · Battery & CPU temp
+  - **Network**: live traffic sparkline
+  - **Git**: branch, changes, ahead/behind, stash (runs in the active pane's cwd)
+  - **Databases**: a mini DataGrip — connect to Postgres/MySQL, run SQL, browse
+    results
+  - **Terminal**: Macros (buttons that type your commands into the focused pane)
+  - **Productivity**: Clock, Notes, Clipboard history, Pomodoro
+  - **Media**: Apple Music control
+
+  ![Widget catalog](docs/catalog.png)
+
+### Write your own widget
+
+A widget is a small object registered on `window.WIDGETS`:
+
+```js
+window.WIDGETS.myip = {
+    id: "myip",
+    title: "widget.myip",          // i18n key (or a plain string)
+    category: "network",
+    description: "Shows something",
+    defaultSize: { w: 6, h: 2 },
+    mount(bodyEl) {
+        bodyEl.textContent = "hello";
+        const iv = setInterval(() => { /* update */ }, 1000);
+        return { destroy: () => clearInterval(iv) };   // cleanup
+    }
+};
+```
+
+Widgets reach the system only through the `window.dyo` bridge:
+`dyo.si(fn, …)` (systeminformation), `dyo.exec(cmd, args, {cwd})` (run a CLI),
+`dyo.db.*` (database), `dyo.settings`, `dyo.notes`, `dyo.music`. Drop the file in
+`src/renderer/widgets/`, add a `<script>` in `index.html`, and it appears in the
+catalog.
 - **Themes** — Stark, Nebula, Voltage, Graphite. Gallery at `⌘K`; drop your own
   JSON into the app's `themes/` folder.
 - **Languages** — English (default) and Русский, switchable from the top-bar menu.

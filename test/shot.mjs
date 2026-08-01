@@ -34,9 +34,23 @@ try {
     // Type some representative content into the terminal
     await ev(`window.term.activeTab().focused.term.paste("cd ~ && printf '\\\\033[1;33mdyo-term\\\\033[0m ready — arm64 native\\\\n' && ls -1 | head -8\\r")`);
     await delay(1400);
-    const shot = await cdp("Page.captureScreenshot", { format: "png" });
+    let shot = await cdp("Page.captureScreenshot", { format: "png" });
     fs.writeFileSync(path.join(appDir, "docs", "screenshot.png"), Buffer.from(shot.data, "base64"));
-    console.log("screenshot written to docs/screenshot.png");
+    console.log("wrote docs/screenshot.png");
+
+    // Populated DevOps dashboard
+    await ev(`["git","macros","netmon","db","pomodoro"].forEach(id => window.dash.addWidget(id, {autoPosition:true}, false))`);
+    await delay(1800);
+    shot = await cdp("Page.captureScreenshot", { format: "png" });
+    fs.writeFileSync(path.join(appDir, "docs", "devops.png"), Buffer.from(shot.data, "base64"));
+    console.log("wrote docs/devops.png");
+
+    // Catalog overlay
+    await ev(`window.dash.openCatalog()`);
+    await delay(500);
+    shot = await cdp("Page.captureScreenshot", { format: "png" });
+    fs.writeFileSync(path.join(appDir, "docs", "catalog.png"), Buffer.from(shot.data, "base64"));
+    console.log("wrote docs/catalog.png");
 } catch (e) {
     console.error("shot error:", e.message);
 } finally {

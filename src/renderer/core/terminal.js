@@ -314,6 +314,12 @@ class TerminalManager {
         if (t && t.focused) t.focused.searchAddon.findNext(query, { regex: false, caseSensitive: false });
     }
 
+    // Type a command into the focused terminal (used by the macros widget)
+    runInFocused(cmd) {
+        const t = this.activeTab();
+        if (t && t.focused && t.focused.id) window.dyo.pty.input(t.focused.id, cmd);
+    }
+
     reloadThemeOnAll() {
         const theme = window.ThemeEngine.terminalTheme();
         this.tabs.forEach(t => t.panes().forEach(p => { p.term.options.theme = theme; }));

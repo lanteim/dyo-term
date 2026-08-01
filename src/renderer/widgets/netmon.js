@@ -12,6 +12,8 @@ function fmtRate(bytesPerSec) {
 window.WIDGETS.netmon = {
     id: "netmon",
     title: "widget.netmon",
+    category: "network",
+    description: "Live traffic ↑/↓ with sparkline",
     defaultSize: { w: 6, h: 3 },
     mount(body) {
         const t = window.I18N.t.bind(window.I18N);

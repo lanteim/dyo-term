@@ -3,6 +3,8 @@ window.WIDGETS = window.WIDGETS || {};
 window.WIDGETS.notes = {
     id: "notes",
     title: "widget.notes",
+    category: "productivity",
+    description: "Autosaved scratchpad",
     defaultSize: { w: 6, h: 3 },
     mount(body) {
         body.innerHTML = `<textarea class="notes" spellcheck="false" data-i18n-ph="notes.placeholder" placeholder="${window.I18N.t("notes.placeholder")}"></textarea>`;

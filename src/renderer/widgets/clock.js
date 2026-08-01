@@ -3,6 +3,8 @@ window.WIDGETS = window.WIDGETS || {};
 window.WIDGETS.clock = {
     id: "clock",
     title: "widget.clock",
+    category: "productivity",
+    description: "Time & date",
     defaultSize: { w: 6, h: 2 },
     mount(body) {
         body.innerHTML = `<div style="display:flex;flex-direction:column;justify-content:center;height:100%">

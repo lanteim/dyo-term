@@ -8,12 +8,20 @@ class Dashboard {
         this.mounted = new Map(); // itemEl -> {widgetId, instance}
         host.innerHTML = `
             <div id="editbar">
-                <span class="hint" data-i18n="edit.add">Add widget:</span>
-                <div id="widget-chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+                <button id="open-catalog" class="chip" data-i18n="edit.add">Add widget</button>
                 <span class="hint" data-i18n="edit.hint">Drag by header · resize from edges · ✕ to remove</span>
             </div>
             <div class="grid-stack"></div>`;
         this.gridEl = host.querySelector(".grid-stack");
+
+        // Categorized widget catalog (default is minimal; users add from here)
+        this.catalog = document.createElement("div");
+        this.catalog.className = "overlay";
+        this.catalog.id = "catalog-overlay";
+        this.catalog.innerHTML = `<div class="dialog"><h2 data-i18n="catalog.title">Widget Catalog</h2><div id="catalog-body"></div></div>`;
+        document.body.appendChild(this.catalog);
+        this.catalog.addEventListener("click", e => { if (e.target.id === "catalog-overlay") this.catalog.classList.remove("open"); });
+        host.querySelector("#open-catalog").onclick = () => this.openCatalog();
 
         this.grid = window.GridStack.init({
             column: 12,
@@ -26,7 +34,6 @@ class Dashboard {
         }, this.gridEl);
 
         this.grid.on("change", () => this.persist());
-        this._buildChips(host);
 
         const saved = settings.layout;
         if (saved && Array.isArray(saved.items) && saved.items.length) {
@@ -36,25 +43,41 @@ class Dashboard {
         }
     }
 
+    // Minimal by default — everything else is opt-in via the catalog
     _defaultLayout() {
         this.addWidget("clock", { x: 0, y: 0, w: 12, h: 2 }, false);
         this.addWidget("sysmon", { x: 0, y: 2, w: 12, h: 4 }, false);
-        this.addWidget("netmon", { x: 0, y: 6, w: 12, h: 4 }, false);
-        this.addWidget("nowplaying", { x: 0, y: 10, w: 12, h: 4 }, false);
-        this.addWidget("notes", { x: 0, y: 14, w: 12, h: 4 }, false);
+        this.addWidget("notes", { x: 0, y: 6, w: 12, h: 4 }, false);
         this.persist();
     }
 
-    _buildChips(host) {
-        const chips = host.querySelector("#widget-chips");
+    openCatalog() {
+        const bodyEl = this.catalog.querySelector("#catalog-body");
+        // Group widget definitions by category
+        const groups = {};
         Object.values(window.WIDGETS).forEach(w => {
-            const chip = document.createElement("div");
-            chip.className = "chip";
-            chip.setAttribute("data-i18n-prefix", w.title);
-            chip.textContent = "+ " + window.I18N.t(w.title);
-            chip.onclick = () => { this.addWidget(w.id, { autoPosition: true }, true); };
-            chips.appendChild(chip);
+            const cat = w.category || "other";
+            (groups[cat] = groups[cat] || []).push(w);
         });
+        let html = "";
+        Object.keys(groups).sort().forEach(cat => {
+            html += `<div style="margin:14px 0 8px;color:var(--text-dim);font-size:11px;letter-spacing:1.5px;text-transform:uppercase">${window.I18N.t("cat." + cat) || cat}</div>`;
+            html += `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">`;
+            groups[cat].forEach(w => {
+                html += `<div class="cat-item" data-id="${w.id}" style="border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer">
+                    <div style="color:var(--accent);font-size:13px">${window.I18N.t(w.title)}</div>
+                    <div style="color:var(--text-dim);font-size:10.5px;margin-top:3px">${w.description || ""}</div>
+                </div>`;
+            });
+            html += `</div>`;
+        });
+        bodyEl.innerHTML = html;
+        bodyEl.querySelectorAll(".cat-item").forEach(el => {
+            el.onmouseenter = () => el.style.borderColor = "var(--accent)";
+            el.onmouseleave = () => el.style.borderColor = "var(--border)";
+            el.onclick = () => { this.addWidget(el.dataset.id, { autoPosition: true }, true); this.catalog.classList.remove("open"); };
+        });
+        this.catalog.classList.add("open");
     }
 
     addWidget(widgetId, pos, persist) {
