@@ -29,18 +29,23 @@ no GPL code.
 
   ![Widget catalog](docs/catalog.png)
 
-- **A.Petrov-style monitoring** — a suite of real-time panels built on the
-  **APWidget** framework: independent, visibility-aware refresh (idle widgets stop
-  polling), a per-series **history ring buffer** with **1m / 5m / 15m / 1h** ranges
-  and **CSV export**, per-widget **settings**, and graceful "not available on this
-  host" states. Widgets: **CPU** (per-core + top procs), **Memory** (buffers/cache/
-  swap + top procs), **Disk** (usage, IOPS, read/write, inodes), **Network** (RX/TX,
-  errors, connections), **System**, **Services** (systemd), **Logs** (journalctl),
-  **Docker**, **Kubernetes**, **Ceph**, **Proxmox**, and databases **PostgreSQL /
-  ClickHouse / MySQL / InfluxDB / Redis**. Linux-host widgets (systemd, journalctl,
-  Ceph, Proxmox) activate on the appropriate host and degrade cleanly elsewhere.
+- **A.Petrov-style monitoring** — real-time panels built on the **APWidget**
+  framework: independent, visibility-aware refresh (idle widgets stop polling), a
+  per-series **history ring buffer** with **1m / 5m / 15m / 1h** ranges and **CSV
+  export**, per-widget **settings**, and graceful "not available" states. Widgets:
+  **CPU** (per-core + top procs), **Memory** (buffers/cache/swap + top procs),
+  **Disk** (usage, IOPS, read/write, inodes), **Network** (RX/TX, errors,
+  connections), **System**, **Services** (systemd), **Logs** (journalctl).
+  - **Metrics follow your SSH session.** When a terminal tab is `ssh`'d into a
+    server, the A.Petrov widgets read **that server's** metrics (over your existing
+    ssh — keys/agent/config, `/proc` parsing). Switch tabs → the metrics switch to
+    that tab's host. A badge shows which host each panel is reading.
 
-### 350+ widgets across 27 categories — a terminal for any IT professional
+- **Local music player** — point the **Music Folder** widget at a directory and
+  play any local audio (mp3/flac/m4a/aac/ogg/opus/wav): playlist, search, seek,
+  shuffle, volume. No streaming, no accounts.
+
+### 340+ widgets across 27 categories — a terminal for any IT professional
 
 Every widget mounts sandboxed, degrades gracefully when a tool/endpoint is
 absent, and is verified in real Electron by `test/debug-all.mjs`.
