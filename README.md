@@ -47,9 +47,10 @@ absent, and is verified in real Electron by `test/debug-all.mjs`.
 | **Network** | connections, ports, DNS, traceroute, whois, ping radar, ARP, routes, wifi, mtr, speedtest |
 | **Productivity / Media / AI** | clock, notes, clipboard, pomodoro, kanban, world clock; Apple Music; AI assistant (OpenAI/Ollama) |
 
-Open the catalog (`⌘E` → Add widget), pick a category, click to add. Widgets that
-talk to a service show a compact inline config form — set a URL/token once and it
-persists.
+Open the catalog (`⌘E` → Add widget), then **search by name**, filter by
+**category chip**, or flip to **A–Z** mode for an alphabetical list with a
+letter quick-jump index — click any card to add it. Widgets that talk to a
+service show a compact inline config form — set a URL/token once and it persists.
 
 ### Write your own widget
 
@@ -123,6 +124,9 @@ npm run build      # dist/dyo-term-macOS-arm64.dmg + .zip
 | Edit widgets | `⌘E` |
 | Theme gallery | `⌘K` |
 | Fullscreen | `⌘↵` |
+| Copy / paste (terminal & fields) | `⌘C` / `⌘V` |
+| Toggle dashboard (full-width terminal) | top-bar grid button |
+| Resize terminal ⇄ dashboard | drag the center divider |
 
 ## Configuration
 
