@@ -12,6 +12,8 @@ const os = require("os");
 const {execFile} = require("child_process");
 const pty = require("node-pty");
 const si = require("systeminformation");
+const platform = require("./platform");
+const {windowOptions, menuTemplate} = platform;
 
 if (process.env.DYOTERM_USER_DATA) {
     app.setPath("userData", path.resolve(process.env.DYOTERM_USER_DATA));
@@ -34,8 +36,8 @@ let ptySeq = 0;
 // ---------------------------------------------------------------- settings ---
 
 const DEFAULT_SETTINGS = {
-    shell: process.env.SHELL || "/bin/zsh",
-    shellArgs: ["-l"],
+    shell: platform.defaultShell(),
+    shellArgs: platform.defaultShellArgs(),
     cwd: app.getPath("home"),
     theme: "stark",
     fontFamily: "JetBrains Mono",
@@ -71,6 +73,16 @@ function saveSettings(patch) {
 // Degrades to process.env instead of failing.
 function getLoginEnv(shellPath) {
     return new Promise(resolve => {
+        // pwsh/powershell/cmd have no `-ilc`; Electron already inherits the full
+        // user env on Windows, so skip the login-shell capture there.
+        if (process.platform === "win32") {
+            const env = Object.assign({}, process.env);
+            env.TERM = "xterm-256color";
+            env.COLORTERM = "truecolor";
+            env.TERM_PROGRAM = "dyo-term";
+            env.TERM_PROGRAM_VERSION = app.getVersion();
+            return resolve(env);
+        }
         execFile(shellPath, ["-ilc", "command env; exit 0"], {timeout: 8000, maxBuffer: 4 * 1024 * 1024}, (err, stdout) => {
             const env = Object.assign({}, process.env);
             if (!err && stdout) {
@@ -105,12 +117,11 @@ function createWindow(settings) {
         minWidth: 900,
         minHeight: 600,
         backgroundColor: "#05070a",
-        titleBarStyle: "hiddenInset",
-        trafficLightPosition: {x: 14, y: 18},
         fullscreenable: true,
         fullscreen: settings.forceFullscreen || false,
         show: false,
         paintWhenInitiallyHidden: true,
+        ...windowOptions(process.platform),
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
             contextIsolation: true,
@@ -169,7 +180,7 @@ function registerIpc() {
         const cwd = (opts.cwd && fs.existsSync(opts.cwd)) ? opts.cwd
             : (fs.existsSync(settings.cwd) ? settings.cwd : os.homedir());
         const args = Array.isArray(settings.shellArgs) ? settings.shellArgs
-            : (typeof settings.shellArgs === "string" && settings.shellArgs.trim() ? settings.shellArgs.trim().split(/\s+/) : ["-l"]);
+            : (typeof settings.shellArgs === "string" && settings.shellArgs.trim() ? settings.shellArgs.trim().split(/\s+/) : platform.defaultShellArgs(settings.shell));
 
         const proc = pty.spawn(settings.shell, args, {
             name: "xterm-256color",
@@ -208,13 +219,7 @@ function registerIpc() {
     ipcMain.handle("pty:cwd", async (e, id) => {
         const t = ptys.get(id);
         if (!t) return null;
-        return new Promise(resolve => {
-            execFile("lsof", ["-a", "-d", "cwd", "-p", String(t.proc.pid), "-F", "n"], (err, out) => {
-                if (err) return resolve(null);
-                const line = String(out).split("\n").find(l => l.startsWith("n"));
-                resolve(line ? line.slice(1).trim() : null);
-            });
-        });
+        return platform.cwdOf(t.proc.pid);
     });
 
     // systeminformation, allowlisted by property lookup
@@ -383,11 +388,8 @@ if (!gotLock) app.exit(0);
 app.whenReady().then(() => {
     fs.mkdirSync(USER_DIR, {recursive: true});
     nativeTheme.themeSource = "dark";
-    if (process.platform === "darwin") {
-        Menu.setApplicationMenu(Menu.buildFromTemplate([
-            {role: "appMenu"}, {role: "editMenu"}, {role: "viewMenu"}, {role: "windowMenu"}
-        ]));
-    }
+    const tmpl = menuTemplate(process.platform);
+    Menu.setApplicationMenu(tmpl ? Menu.buildFromTemplate(tmpl) : null);
     registerIpc();
     const settings = loadSettings();
     loginEnvPromise = getLoginEnv(settings.shell);

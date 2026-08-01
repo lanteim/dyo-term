@@ -20,6 +20,10 @@
     "start": "electron .",
     "postinstall": "electron-rebuild -f -w node-pty",
     "build": "electron-builder build --mac --arm64",
+    "build:mac": "electron-builder build --mac --arm64",
+    "build:win": "electron-builder build --win --x64",
+    "debug:widgets": "node test/debug-all.mjs",
+    "test": "node test/smoke.mjs",
     "clean": "rm -rf dist"
   },
   "build": {
@@ -57,6 +61,18 @@
     },
     "dmg": {
       "artifactName": "dyo-term-macOS-${arch}.dmg"
+    },
+    "win": {
+      "target": [
+        {"target": "nsis", "arch": ["x64", "arm64"]},
+        {"target": "portable", "arch": ["x64"]}
+      ],
+      "artifactName": "dyo-term-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
     }
   },
   "dependencies": {
