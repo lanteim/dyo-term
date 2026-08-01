@@ -19,18 +19,37 @@ no GPL code.
   - Split panes, iTerm-style: `⌘D` vertical, `⌘⇧D` horizontal, drag to resize
   - Find in buffer with regex (`⌘F`)
 - **Widget dashboard** — a Gridstack canvas you can rearrange, resize, add to and
-  remove from in edit mode (`⌘E`). The default is deliberately minimal; add what
-  you need from the categorized **Widget Catalog**. Layout persists.
-  - **System**: CPU/RAM/load/uptime · Battery & CPU temp
-  - **Network**: live traffic sparkline
-  - **Git**: branch, changes, ahead/behind, stash (runs in the active pane's cwd)
-  - **Databases**: a mini DataGrip — connect to Postgres/MySQL, run SQL, browse
-    results
-  - **Terminal**: Macros (buttons that type your commands into the focused pane)
-  - **Productivity**: Clock, Notes, Clipboard history, Pomodoro
-  - **Media**: Apple Music control
+  remove from in edit mode (`⌘E`). Default is minimal (clock, system, notes);
+  everything else is opt-in from the categorized **Widget Catalog**. Layout
+  persists.
 
   ![Widget catalog](docs/catalog.png)
+
+### 330+ widgets across 26 categories — a terminal for any IT professional
+
+Every widget mounts sandboxed, degrades gracefully when a tool/endpoint is
+absent, and is verified in real Electron by `test/debug-all.mjs`.
+
+| Area | Examples |
+|---|---|
+| **Monitoring** | htop, per-core CPU, mem/CPU/net/disk history graphs, disk IO, GPU, Prometheus, log tail |
+| **System** | CPU/RAM/load, battery & temp, sensors, services, crontab, disk usage, brew outdated, power, OS/CPU info |
+| **Kubernetes** | context switch, pods, deployments, services, events, nodes, top, logs, port-forward, rollout, HPA, helm |
+| **Docker** | ps, stats, images, volumes, compose, logs, exec, prune + podman/colima/lima/kind/minikube |
+| **Cloud** | AWS (ec2/s3/lambda/rds/alarms), GCP (gke/instances), Azure (aks/vms) |
+| **CI/CD & IaC** | GitHub Actions, GitLab, Jenkins, ArgoCD; Terraform, Vault, Consul, Nomad |
+| **Git** | branch/changes/stash, graph log, PRs, CI runs, branches, blame, reflog, worktrees |
+| **Databases** | mini DataGrip (Postgres/MySQL/ClickHouse/MongoDB/Redis/MSSQL), pg activity/locks, table browser |
+| **Web/API** | HTTP client, JSON/JWT/base64 tools, GraphQL, curl builder, WebSocket tester, IP/DNS info |
+| **Security** | TLS expiry, CVE audit, secret scan, open ports, SSH/GPG keys, password/TOTP/hash generators |
+| **Observability** | Grafana, Loki, Sentry, PagerDuty, Datadog, uptime, Alertmanager, Jaeger |
+| **Dev tools** | regex, cron, uuid, hash, color, timestamp, diff, markdown, cheat-sheets, calculators, converters |
+| **Network** | connections, ports, DNS, traceroute, whois, ping radar, ARP, routes, wifi, mtr, speedtest |
+| **Productivity / Media / AI** | clock, notes, clipboard, pomodoro, kanban, world clock; Apple Music; AI assistant (OpenAI/Ollama) |
+
+Open the catalog (`⌘E` → Add widget), pick a category, click to add. Widgets that
+talk to a service show a compact inline config form — set a URL/token once and it
+persists.
 
 ### Write your own widget
 
@@ -66,6 +85,13 @@ The renderer runs with `contextIsolation` on and `nodeIntegration` off. Every
 privileged operation (pty, system info, filesystem, window control) goes through
 a small typed bridge in `preload.js`. There is no WebSocket/pty server — pty I/O
 is streamed over Electron IPC only.
+
+## Platforms
+
+- **macOS (Apple Silicon)** — this repo. `npm run build` → dmg/zip.
+- **Windows** — code is cross-platform (`src/main/platform.js`); installers are
+  built by CI (`.github/workflows/build.yml`). See
+  [dyo-term for windows](https://github.com/lanteim/dyo-term-for-windows).
 
 ## Requirements
 
