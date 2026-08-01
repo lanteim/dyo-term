@@ -20,12 +20,27 @@ no GPL code.
   - Find in buffer with regex (`⌘F`)
 - **Widget dashboard** — a Gridstack canvas you can rearrange, resize, add to and
   remove from in edit mode (`⌘E`). Default is minimal (clock, system, notes);
-  everything else is opt-in from the categorized **Widget Catalog**. Layout
-  persists.
+  everything else is opt-in from the categorized **Widget Catalog**.
+  - **Dock** the dashboard to any edge — right → bottom → left → top (dock button).
+  - **Layout profiles** — save several dashboards and switch between them instantly
+    (layouts button). Everything auto-saves.
+  - Each widget has a header with **refresh · settings · collapse · close** and a
+    **last-updated** indicator.
 
   ![Widget catalog](docs/catalog.png)
 
-### 330+ widgets across 26 categories — a terminal for any IT professional
+- **A.Petrov-style monitoring** — a suite of real-time panels built on the
+  **APWidget** framework: independent, visibility-aware refresh (idle widgets stop
+  polling), a per-series **history ring buffer** with **1m / 5m / 15m / 1h** ranges
+  and **CSV export**, per-widget **settings**, and graceful "not available on this
+  host" states. Widgets: **CPU** (per-core + top procs), **Memory** (buffers/cache/
+  swap + top procs), **Disk** (usage, IOPS, read/write, inodes), **Network** (RX/TX,
+  errors, connections), **System**, **Services** (systemd), **Logs** (journalctl),
+  **Docker**, **Kubernetes**, **Ceph**, **Proxmox**, and databases **PostgreSQL /
+  ClickHouse / MySQL / InfluxDB / Redis**. Linux-host widgets (systemd, journalctl,
+  Ceph, Proxmox) activate on the appropriate host and degrade cleanly elsewhere.
+
+### 350+ widgets across 27 categories — a terminal for any IT professional
 
 Every widget mounts sandboxed, degrades gracefully when a tool/endpoint is
 absent, and is verified in real Electron by `test/debug-all.mjs`.
