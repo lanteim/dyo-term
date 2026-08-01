@@ -47,6 +47,12 @@ contextBridge.exposeInMainWorld("dyo", {
     openPath: (p) => ipcRenderer.invoke("open:path", p),
     openExternal: (u) => ipcRenderer.invoke("open:external", u),
     exec: (cmd, args, opts) => ipcRenderer.invoke("exec", cmd, args, opts),
+    http: (url, opts) => ipcRenderer.invoke("http", url, opts),
+    fs: {
+        list: (dir) => ipcRenderer.invoke("fs:list", dir),
+        read: (p, maxBytes) => ipcRenderer.invoke("fs:read", p, maxBytes),
+        stat: (p) => ipcRenderer.invoke("fs:stat", p)
+    },
     db: {
         connect: (cfg) => ipcRenderer.invoke("db:connect", cfg),
         query: (id, sql, params) => ipcRenderer.invoke("db:query", id, sql, params),

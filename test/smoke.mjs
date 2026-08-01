@@ -75,8 +75,9 @@ try {
     });
     await scenario("terminal-io", async () => {
         await waitFor("window.term.activeTab() && window.term.activeTab().focused && window.term.activeTab().focused.id", 15000, "pty ready");
+        await delay(1200); // let the login shell print its first prompt
         const marker = "dyo_smoke_" + Date.now();
-        await ev(`window.term.activeTab().focused.term.paste("echo ${marker}\\r")`);
+        await ev(`window.dyo.pty.input(window.term.activeTab().focused.id, "echo ${marker}\\n")`);
         await waitFor(`(()=>{const p=window.term.activeTab().focused; const b=p.term.buffer.active; let s=''; for(let i=0;i<b.length;i++){const l=b.getLine(i); if(l) s+=l.translateToString(true)+'\\n';} return s.split('${marker}').length>=3;})()`, 15000, "echo output");
         return "shell echoed";
     });

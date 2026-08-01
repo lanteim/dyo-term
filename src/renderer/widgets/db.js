@@ -19,6 +19,10 @@ window.WIDGETS.db = {
                 <select class="db-type" style="background:var(--bg-elevated);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px">
                     <option value="postgres">Postgres</option>
                     <option value="mysql">MySQL</option>
+                    <option value="clickhouse">ClickHouse</option>
+                    <option value="mongodb">MongoDB</option>
+                    <option value="redis">Redis</option>
+                    <option value="mssql">MSSQL</option>
                 </select>
                 <input class="db-host" placeholder="host" value="127.0.0.1" style="width:100px"/>
                 <input class="db-port" placeholder="port" style="width:60px"/>
@@ -43,8 +47,20 @@ window.WIDGETS.db = {
         [".db-connect", ".db-run"].forEach(s => {
             $(s).style.cssText += ";background:transparent;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer";
         });
-        $(".db-type").onchange = () => { $(".db-port").placeholder = $(".db-type").value === "mysql" ? "3306" : "5432"; };
-        $(".db-port").placeholder = "5432";
+        const PORTS = { postgres: "5432", mysql: "3306", clickhouse: "8123", mongodb: "27017", redis: "6379", mssql: "1433" };
+        const HINTS = {
+            postgres: "SELECT … — ⌘↵ to run", mysql: "SELECT … — ⌘↵ to run",
+            clickhouse: "SELECT … — ⌘↵ to run", mssql: "SELECT … — ⌘↵ to run",
+            mongodb: 'Command doc, e.g. {"find":"users","filter":{},"limit":50}',
+            redis: 'Command line, e.g. KEYS *   or   GET mykey'
+        };
+        const syncType = () => {
+            const t = $(".db-type").value;
+            $(".db-port").placeholder = PORTS[t] || "";
+            $(".db-sql").placeholder = HINTS[t] || "";
+        };
+        $(".db-type").onchange = syncType;
+        syncType();
 
         $(".db-connect").onclick = async () => {
             if (connId) { await window.dyo.db.close(connId); connId = null; $(".db-connect").textContent = "Connect"; $(".db-run").disabled = true; $(".db-status").textContent = "disconnected"; return; }

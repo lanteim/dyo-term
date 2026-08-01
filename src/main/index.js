@@ -301,6 +301,43 @@ function registerIpc() {
         });
     });
 
+    // Filesystem reads for file/project/log widgets (read-only)
+    ipcMain.handle("fs:list", (e, dir) => {
+        try {
+            return fs.readdirSync(dir, { withFileTypes: true })
+                .map(d => ({ name: d.name, dir: d.isDirectory(), symlink: d.isSymbolicLink() }));
+        } catch (err) { return { error: err.message }; }
+    });
+    ipcMain.handle("fs:read", (e, p, maxBytes = 500000) => {
+        try {
+            const st = fs.statSync(p);
+            if (st.size > maxBytes) return { error: "file too large", size: st.size };
+            return { content: fs.readFileSync(p, "utf-8"), size: st.size };
+        } catch (err) { return { error: err.message }; }
+    });
+    ipcMain.handle("fs:stat", (e, p) => {
+        try { const s = fs.statSync(p); return { size: s.size, dir: s.isDirectory(), mtimeMs: s.mtimeMs }; }
+        catch (err) { return { error: err.message }; }
+    });
+
+    // Outbound HTTP for widgets (Prometheus, AI endpoints, etc.), routed through
+    // main so the renderer CSP stays locked to 'self'.
+    ipcMain.handle("http", async (e, url, opts = {}) => {
+        try {
+            const controller = new AbortController();
+            const to = setTimeout(() => controller.abort(), opts.timeout || 12000);
+            const r = await fetch(url, {
+                method: opts.method || "GET",
+                headers: opts.headers || {},
+                body: opts.body,
+                signal: controller.signal
+            });
+            clearTimeout(to);
+            const text = await r.text();
+            return { status: r.status, ok: r.ok, text };
+        } catch (err) { return { error: err.message }; }
+    });
+
     require("./db.js").register(ipcMain);
 }
 

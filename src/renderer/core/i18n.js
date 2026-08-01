@@ -115,6 +115,13 @@ window.I18N = {
         return (key in l) ? l[key] : (this.dict.en[key] != null ? this.dict.en[key] : key);
     },
 
+    // Widgets self-register their strings so parallel widget files never touch
+    // this shared dictionary directly. pack = { en: {...}, ru: {...} }
+    register(pack) {
+        if (pack.en) Object.assign(this.dict.en, pack.en);
+        if (pack.ru) Object.assign(this.dict.ru, pack.ru);
+    },
+
     onChange(cb) { this._listeners.push(cb); },
 
     set(lang) {
