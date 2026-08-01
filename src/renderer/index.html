@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; script-src 'self'" />
+    <title>dyo-term</title>
+
+    <link rel="stylesheet" href="../../node_modules/gridstack/dist/gridstack.min.css" />
+    <link rel="stylesheet" href="../../node_modules/@xterm/xterm/css/xterm.css" />
+    <link rel="stylesheet" href="styles/fonts.css" />
+    <link rel="stylesheet" href="styles/app.css" />
+</head>
+<body>
+    <div id="app">
+        <div id="topbar">
+            <span class="brand">dyo<b>·</b>term</span>
+            <span class="meta" id="meta"></span>
+            <span class="spacer"></span>
+            <div class="actions" id="actions"></div>
+        </div>
+        <div id="main">
+            <div id="terminal-col">
+                <div id="tabbar"></div>
+                <div id="panes"></div>
+            </div>
+            <div id="dash-col"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="theme-overlay">
+        <div class="dialog">
+            <h2 data-i18n="gallery.title">Theme Gallery</h2>
+            <div class="theme-grid" id="theme-grid"></div>
+        </div>
+    </div>
+
+    <!-- Vendor (MIT / permissive), loaded as UMD globals -->
+    <script src="../../node_modules/@xterm/xterm/lib/xterm.js"></script>
+    <script src="../../node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+    <script src="../../node_modules/@xterm/addon-search/lib/addon-search.js"></script>
+    <script src="../../node_modules/@xterm/addon-web-links/lib/addon-web-links.js"></script>
+    <script src="../../node_modules/@xterm/addon-webgl/lib/addon-webgl.js"></script>
+    <script src="../../node_modules/gridstack/dist/gridstack-all.js"></script>
+
+    <!-- App -->
+    <script src="core/icons.js"></script>
+    <script src="core/i18n.js"></script>
+    <script src="core/theme.js"></script>
+    <script src="core/terminal.js"></script>
+    <script src="core/dashboard.js"></script>
+    <script src="widgets/clock.js"></script>
+    <script src="widgets/sysmon.js"></script>
+    <script src="widgets/netmon.js"></script>
+    <script src="widgets/nowplaying.js"></script>
+    <script src="widgets/notes.js"></script>
+    <script src="core/app.js"></script>
+</body>
+</html>
