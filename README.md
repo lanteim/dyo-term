@@ -15,17 +15,28 @@ no GPL code.
 
 - **Terminal** — native pty (node-pty) streamed to xterm.js over IPC. No local
   socket or server: the shell is never exposed on the network.
-  - Unlimited tabs (`⌘T`, `⌘1`–`⌘9`)
-  - Split panes, iTerm-style: `⌘D` vertical, `⌘⇧D` horizontal, drag to resize
-  - Find in buffer with regex (`⌘F`)
+  - Unlimited tabs (`⌘T`, `⌘1`–`⌘9`); rename (double-click / `F2`), drag to
+    reorder, reopen last closed (`⌘⇧T`)
+  - Split panes, iTerm-style: `⌘D` vertical, `⌘⇧D` horizontal; drag **or**
+    keyboard resize (`⌘⌥⇧`+arrows); directional focus (`⌘⌥`+arrows); **zoom** the
+    focused pane (`⌘⇧↵`)
+  - **Command palette** (`⌘⇧P`) — fuzzy-launch any action; keybinding
+    **cheat-sheet** (`⌘/`)
+  - Find with regex (`⌘F`) — next/prev, live match count, highlight-all
+  - Live **font zoom** (`⌘=` / `⌘-` / `⌘0`), **broadcast input** to all panes in a
+    tab (`⌘⌥I`), clear scrollback (`⌘⇧K`), multiline-paste guard, Unicode-11
+    wide-glyph widths
 - **Widget dashboard** — a Gridstack canvas you can rearrange, resize, add to and
   remove from in edit mode (`⌘E`). Default is minimal (clock, system, notes);
   everything else is opt-in from the categorized **Widget Catalog**.
   - **Dock** the dashboard to any edge — right → bottom → left → top (dock button).
   - **Layout profiles** — save several dashboards and switch between them instantly
     (layouts button). Everything auto-saves.
+  - **Responsive** — the grid adds columns as it widens (great on ultrawide, tidy
+    on a laptop) with a **density** control (compact / comfortable / spacious).
   - Each widget has a header with **refresh · settings · collapse · close** and a
-    **last-updated** indicator.
+    **last-updated** indicator; keyboard shortcuts on the focused widget
+    (`r` refresh, `e` export, `c` collapse, `1`–`4` range).
 
   ![Widget catalog](docs/catalog.png)
 
@@ -35,11 +46,16 @@ no GPL code.
   export**, per-widget **settings**, and graceful "not available" states. Widgets:
   **CPU** (per-core + top procs), **Memory** (buffers/cache/swap + top procs),
   **Disk** (usage, IOPS, read/write, inodes), **Network** (RX/TX, errors,
-  connections), **System**, **Services** (systemd), **Logs** (journalctl).
+  connections), **System**, **Services** (systemd), **Logs** (journalctl),
+  **Containers** (docker/podman), **GPU** (nvidia-smi).
   - **Metrics follow your SSH session.** When a terminal tab is `ssh`'d into a
     server, the A.Petrov widgets read **that server's** metrics (over your existing
     ssh — keys/agent/config, `/proc` parsing). Switch tabs → the metrics switch to
     that tab's host. A badge shows which host each panel is reading.
+  - **Graphs done right** — gridlines, a dashed peak line, last-value dot and a
+    hover crosshair with a min / avg / max / last readout; configurable
+    **warn/crit thresholds** colorize values and can fire a desktop notification;
+    polling backs off on errors and shows a **STALE** marker when data goes cold.
 
 - **Local music player** — point the **Music Folder** widget at a directory and
   play any local audio (mp3/flac/m4a/aac/ogg/opus/wav): playlist, search, seek,
@@ -136,17 +152,28 @@ npm run build      # dist/dyo-term-macOS-arm64.dmg + .zip
 
 | Action | Shortcut |
 |---|---|
-| New tab | `⌘T` |
+| **Command palette** | `⌘⇧P` |
+| **Keyboard cheat-sheet** | `⌘/` |
+| New tab / reopen closed | `⌘T` / `⌘⇧T` |
 | Jump to tab | `⌘1`–`⌘9` |
+| Rename tab | `F2` / double-click |
 | Split vertical / horizontal | `⌘D` / `⌘⇧D` |
+| Zoom / maximize pane | `⌘⇧↵` |
+| Focus pane (directional) | `⌘⌥` + arrows |
+| Resize pane (keyboard) | `⌘⌥⇧` + arrows |
 | Close pane | `⌘W` |
-| Find | `⌘F` |
+| Find (next / prev) | `⌘F` (`↵` / `⇧↵`) |
+| Font zoom in / out / reset | `⌘=` / `⌘-` / `⌘0` |
+| Broadcast input to all panes | `⌘⌥I` |
+| Clear scrollback | `⌘⇧K` |
 | Edit widgets | `⌘E` |
 | Theme gallery | `⌘K` |
 | Fullscreen | `⌘↵` |
 | Copy / paste (terminal & fields) | `⌘C` / `⌘V` |
-| Toggle dashboard (full-width terminal) | top-bar grid button |
+| Toggle dashboard / dock / density / layouts | top-bar buttons |
 | Resize terminal ⇄ dashboard | drag the center divider |
+
+> On Windows/Linux the app shortcuts use `Ctrl+Shift` (e.g. palette `Ctrl+Shift+P`), and pane focus/broadcast use `Ctrl+Alt`, so `Ctrl+C`/`Ctrl+D` stay with the shell.
 
 ## Configuration
 

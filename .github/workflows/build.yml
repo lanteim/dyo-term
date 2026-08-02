@@ -44,7 +44,8 @@ jobs:
         run: npm ci
 
       - name: Build (${{ matrix.script }})
-        run: npm run ${{ matrix.script }}
+        # -p never: we attach artifacts + create releases manually; never auto-publish
+        run: npm run ${{ matrix.script }} -- -p never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # keep native rebuilds from being skipped by electron-builder cache
