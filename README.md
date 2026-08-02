@@ -40,7 +40,7 @@ no GPL code.
 
   ![Widget catalog](docs/catalog.png)
 
-- **A.Petrov-style monitoring** — real-time panels built on the **APWidget**
+- **Live monitoring** <sub>— commissioned by A. Petrov</sub> — real-time panels built on the **APWidget**
   framework: independent, visibility-aware refresh (idle widgets stop polling), a
   per-series **history ring buffer** with **1m / 5m / 15m / 1h** ranges and **CSV
   export**, per-widget **settings**, and graceful "not available" states. Widgets:
@@ -49,7 +49,7 @@ no GPL code.
   connections), **System**, **Services** (systemd), **Logs** (journalctl),
   **Containers** (docker/podman), **GPU** (nvidia-smi).
   - **Metrics follow your SSH session.** When a terminal tab is `ssh`'d into a
-    server, the A.Petrov widgets read **that server's** metrics (over your existing
+    server, the monitoring widgets read **that server's** metrics (over your existing
     ssh — keys/agent/config, `/proc` parsing). Switch tabs → the metrics switch to
     that tab's host. A badge shows which host each panel is reading.
   - **Graphs done right** — gridlines, a dashed peak line, last-value dot and a
