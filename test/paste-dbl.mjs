@@ -3,7 +3,7 @@
 // We simulate both and assert the text reaches the pty exactly once. Also checks the
 // multiline guard shows one dialog, and the guardedPaste dedupe collapses a rapid
 // double call. No real clipboard needed — synthetic ClipboardEvent carries the text.
-import { spawn } from "node:child_process";
+import { spawn, execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -92,4 +92,4 @@ try {
     check("no uncaught console errors", errs.length === 0);
     if (errs.length) console.log("errors:", errs.slice(0, 6).join(" | "));
 } catch (e) { console.error("paste-dbl fatal:", e.message); pass = false; }
-finally { try { await ev(`window.dyo.win("close")`); } catch (e) {} await delay(600); try { app.kill("SIGKILL"); } catch (e) {} console.log(pass ? "\nALL PASS" : "\nFAILED"); process.exit(pass ? 0 : 1); }
+finally { try { await ev(`window.dyo.win("close")`); } catch (e) {} await delay(600); try { app.kill("SIGKILL"); } catch (e) {} try { execSync(`pkill -9 -f \"remote-debugging-port=${PORT}"`); } catch (e) {} console.log(pass ? "\nALL PASS" : "\nFAILED"); process.exit(pass ? 0 : 1); }

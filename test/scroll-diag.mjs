@@ -2,7 +2,7 @@
 // the pane's xterm buffer (no shell interaction), then probes scrollback size,
 // wheel scrolling, viewport overflow, and what ESC[3J (clear-scrollback, what
 // `clear`/Ctrl+L emit) does to the buffer. Read-only diagnostic.
-import { spawn } from "node:child_process";
+import { spawn, execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -71,4 +71,4 @@ try {
     console.log(JSON.stringify(rep, null, 2));
     console.log("console errors:", errs.length ? errs.slice(0, 6).join(" | ") : "(none)");
 } catch (e) { console.error("scroll-diag fatal:", e.message); }
-finally { try { await ev(`window.dyo.win("close")`); } catch (e) {} await delay(600); try { app.kill("SIGKILL"); } catch (e) {} process.exit(0); }
+finally { try { await ev(`window.dyo.win("close")`); } catch (e) {} await delay(600); try { app.kill("SIGKILL"); } catch (e) {} try { execSync(`pkill -9 -f \"remote-debugging-port=${PORT}"`); } catch (e) {} process.exit(0); }
